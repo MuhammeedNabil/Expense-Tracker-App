@@ -1,0 +1,13 @@
+{
+  "files": {
+    "main.css": "/static/css/main.ccaa2118.css",
+    "main.js": "/static/js/main.aacfac21.js",
+    "index.html": "/index.html",
+    "main.ccaa2118.css.map": "/static/css/main.ccaa2118.css.map",
+    "main.aacfac21.js.map": "/static/js/main.aacfac21.js.map"
+  },
+  "entrypoints": [
+    "static/css/main.ccaa2118.css",
+    "static/js/main.aacfac21.js"
+  ]
+}
