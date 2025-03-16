@@ -1,0 +1,114 @@
+.balance-container {
+  padding: var(--space-4, 2rem) var(--space-3, 1rem);
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
+  animation: fadeIn 0.3s ease-out;
+}
+
+.app-title {
+  font-weight: 700;
+  font-size: 2.5rem;
+  text-align: center;
+  margin-bottom: 2rem;
+  background: linear-gradient(45deg, #6b46c1, #3182ce);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  letter-spacing: -0.02em;
+  animation: slideUp 0.5s ease-out;
+}
+
+.balance-card {
+  background: linear-gradient(135deg, rgba(255,255,255,0.1), rgba(255,255,255,0.05));
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border-radius: var(--radius-xl, 20px);
+  border: 1px solid rgba(255,255,255,0.18);
+  padding: var(--space-5, 2rem);
+  box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
+  animation: slideUp 0.5s ease-out;
+}
+
+.balance-heading {
+  font-size: 1.5rem;
+  text-align: center;
+  color: var(--text-secondary, rgba(255,255,255,0.7));
+  margin-bottom: 1rem;
+  font-weight: 500;
+}
+
+.balance-amount {
+  font-size: 3.5rem;
+  font-weight: bold;
+  text-align: center;
+  background: linear-gradient(45deg, #3b82f6, #8b5cf6);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  margin-bottom: 2rem;
+  letter-spacing: -0.02em;
+}
+
+.income-expenses-container {
+  display: flex;
+  justify-content: center;
+  gap: var(--space-4, 1rem);
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Responsive Styles */
+@media (max-width: 768px) {
+  .balance-container {
+    padding: var(--space-3, 1rem) var(--space-2, 0.5rem);
+  }
+
+  .app-title {
+    font-size: 2rem;
+    margin-bottom: 1.5rem;
+  }
+
+  .balance-card {
+    padding: var(--space-4, 1.5rem);
+  }
+
+  .balance-amount {
+    font-size: 2.5rem;
+  }
+
+  .income-expenses-container {
+    flex-direction: column;
+    align-items: center;
+  }
+}
+
+/* Hover Effects */
+.balance-card:hover {
+  transform: translateY(-2px);
+  transition: transform 0.3s ease;
+  box-shadow: 0 12px 40px 0 rgba(31, 38, 135, 0.45);
+}
+
+/* Dark Mode Enhancement */
+@media (prefers-color-scheme: dark) {
+  .balance-card {
+    background: linear-gradient(135deg, rgba(255,255,255,0.08), rgba(255,255,255,0.03));
+  }
+} 

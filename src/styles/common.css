@@ -1,0 +1,56 @@
+/* Common Card Styles */
+.glass-card {
+  background: linear-gradient(135deg, rgba(255,255,255,0.1), rgba(255,255,255,0.05));
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border-radius: 20px;
+  border: 1px solid rgba(255,255,255,0.18);
+  box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
+}
+
+/* Common Text Colors */
+.text-white {
+  color: #ffffff;
+}
+
+.text-success {
+  color: #22c55e !important;
+}
+
+.text-danger {
+  color: #ef4444 !important;
+}
+
+/* Common Utilities */
+.d-flex {
+  display: flex;
+}
+
+.justify-content-center {
+  justify-content: center;
+}
+
+.align-items-center {
+  align-items: center;
+}
+
+/* Responsive Utilities */
+@media (max-width: 768px) {
+  .d-none {
+    display: none !important;
+  }
+  
+  .d-md-block {
+    display: block;
+  }
+}
+
+@media (min-width: 769px) {
+  .d-md-none {
+    display: none !important;
+  }
+  
+  .d-md-block {
+    display: block !important;
+  }
+} 

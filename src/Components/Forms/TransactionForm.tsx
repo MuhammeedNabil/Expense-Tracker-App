@@ -11,6 +11,22 @@ import {
   calculateExpense,
   calculateIncome,
 } from "../../State/Reducers/ExpenseSlice";
+import './TransactionForm.styles.css';
+
+const PREDEFINED_CATEGORIES = [
+  // Income Categories
+  { value: "Salary", icon: "fa-money-bill-wave", type: "income" },
+  { value: "Freelance", icon: "fa-laptop-code", type: "income" },
+  // Expense Categories
+  { value: "Transportation", icon: "fa-car", type: "expense" },
+  { value: "Entertainments", icon: "fa-film", type: "expense" },
+  { value: "Installments", icon: "fa-credit-card", type: "expense" },
+  { value: "Shopping", icon: "fa-shopping-bag", type: "expense" },
+  { value: "Food & Drinks", icon: "fa-utensils", type: "expense" },
+  { value: "Traveling", icon: "fa-plane", type: "expense" },
+  { value: "Healthcare", icon: "fa-hospital", type: "expense" },
+  { value: "Education", icon: "fa-graduation-cap", type: "expense" }
+];
 
 export default function TransactionForm() {
   const [expense, setExpense] = useState<IExpense>({
@@ -19,191 +35,142 @@ export default function TransactionForm() {
     date: "",
     note: "",
   });
+  
   const dispatch = useDispatch<AppDispatch>();
+  
   const onChange = <k extends keyof IExpense>(key: k, value: IExpense[k]) => {
     setExpense({ ...expense, [key]: value });
   };
 
-  // ---------------check that the form is filled to provide adding empty transaction----------------------
-  let isFormFilled = false;
-  if (
-    expense.amount === "" ||
-    expense.date === "" ||
-    expense.expenceName === ""
-  ) {
-    isFormFilled = false;
-  } else {
-    isFormFilled = true;
-  }
-  // ---------------to clear the form after addding the transaction----------------------
-  const clearFormHandler = () => {
-    setExpense({
-      expenceName: "",
-      amount: "",
-      date: "",
-      note: "",
-    });
+  const isFormFilled = expense.amount !== "" && expense.date !== "" && expense.expenceName !== "";
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    dispatch(addTransaction(expense));
+    dispatch(calculateBalance());
+    dispatch(calculateExpense());
+    dispatch(calculateIncome());
+    setExpense({ expenceName: "", amount: "", date: "", note: "" });
   };
-  // --------------------Check to make user add his own category----------------------------
-  let isOtherCategSelected = true;
-  if (
-    expense.expenceName === "Installments" ||
-    expense.expenceName === "Entertainments" ||
-    expense.expenceName === "Transportation"
-  ) {
-    isOtherCategSelected = false;
-  } else if (expense.expenceName === "other") {
-    isOtherCategSelected = true;
-  }
+
+  const isCustomCategory = !PREDEFINED_CATEGORIES.map(cat => cat.value).includes(expense.expenceName);
 
   return (
-    <>
-      {/* ----------------------------Add the Transactions Form------------------------- */}
-      <form
-        className="container py-3 shadow text-white border border-dark border-1 mt-3"
-        onSubmit={(e) => {
-          e.preventDefault();
-          clearFormHandler();
-          dispatch(addTransaction(expense));
-          dispatch(calculateBalance());
-          dispatch(calculateExpense());
-          dispatch(calculateIncome());
-        }}
-      >
-        <h3 className="text-decoration-underline border-muted text-center">
-          Add New Transaction
-        </h3>
-        {/* ---------------------------------The Category Section Input------------------------------ */}
-        <Form.Group className="mb-3" controlId="expenseName">
-          <Form.Label>Category</Form.Label>
-          {/* -----------------------------------Transportation section-------------------------------- */}
-          <Form.Check
-            name="expenceName"
-            value="Transportation"
-            type="radio"
-            checked={expense.expenceName === "Transportation"}
-            label="Transportation"
-            onChange={(e) =>
-              onChange(e.target.name as keyof IExpense, e.target.value)
-            }
-          />
-          {/* ----------------------------------Entertainments section---------------------------------- */}
-          <Form.Check
-            name="expenceName"
-            value="Entertainments"
-            checked={expense.expenceName === "Entertainments"}
-            type="radio"
-            label="Entertainments"
-            onChange={(e) =>
-              onChange(e.target.name as keyof IExpense, e.target.value)
-            }
-          />
-          {/* ----------------------------------Installments section----------------------------------- */}
-          <Form.Check
-            name="expenceName"
-            value="Installments"
-            checked={expense.expenceName === "Installments"}
-            type="radio"
-            label="Installments"
-            onChange={(e) =>
-              onChange(e.target.name as keyof IExpense, e.target.value)
-            }
-          />
-          {/* -------------------------------------Other section------------------------------------------ */}
-          <Form.Check
-            name="expenceName"
-            value="other"
-            checked={expense.expenceName === "other"}
-            type="radio"
-            label="Other"
-            onChange={(e) =>
-              onChange(e.target.name as keyof IExpense, e.target.value)
-            }
-          />
-          <Form.Label className="mb-1">Other Category:</Form.Label>
-          {isOtherCategSelected ? (
+    <div className="form-container">
+      <form className="transaction-form" onSubmit={handleSubmit}>
+        <h3 className="form-title">Add New Transaction</h3>
+
+        <div className="form-section">
+          <Form.Group controlId="expenseName">
+            <Form.Label className="section-title">Category</Form.Label>
+            <div className="radio-group">
+              {PREDEFINED_CATEGORIES.map(category => (
+                <div
+                  key={category.value}
+                  className={`category-box ${expense.expenceName === category.value ? "selected" : ""} ${category.type === "income" ? "income-category" : "expense-category"}`}
+                  onClick={() => onChange("expenceName", category.value)}
+                >
+                  <Form.Check
+                    className="radio-item"
+                    name="expenceName"
+                    value={category.value}
+                    type="radio"
+                    checked={expense.expenceName === category.value}
+                    label={category.value}
+                    onChange={(e) => onChange("expenceName", e.target.value)}
+                  />
+                  <i className={`fas ${category.icon} category-icon`}></i>
+                </div>
+              ))}
+
+              <div className={`category-box other-box ${isCustomCategory ? "selected" : ""}`}>
+                <div className="other-input-container">
+                  <div className="other-radio-wrapper">
+                    <Form.Check
+                      name="expenceName"
+                      type="radio"
+                      checked={isCustomCategory}
+                      onChange={() => {
+                        if (!isCustomCategory) {
+                          onChange("expenceName", "");
+                        }
+                      }}
+                    />
+                    <Form.Control
+                      className="other-input text-white"
+                      name="expenceName"
+                      value={isCustomCategory ? expense.expenceName : ""}
+                      type="text"
+                      placeholder="Type custom category..."
+                      onClick={() => {
+                        if (!isCustomCategory) {
+                          onChange("expenceName", "");
+                        }
+                      }}
+                      onChange={(e) => onChange("expenceName", e.target.value)}
+                    />
+                  </div>
+                </div>
+              </div>
+            </div>
+          </Form.Group>
+        </div>
+
+        <div className="form-section">
+          <Form.Group controlId="Amount">
+            <Form.Label className="section-title">Amount</Form.Label>
+            <div className="amount-notice">
+              Enter your Income with positive value and your Expenses with negative value
+            </div>
             <Form.Control
-              name="expenceName"
-              value={expense.expenceName}
-              type="text"
-              placeholder="Write your own Category"
-              onChange={(e) =>
-                onChange(e.target.name as keyof IExpense, e.target.value)
-              }
+              className="form-input text-white"
+              type="number"
+              value={expense.amount}
+              name="amount"
+              placeholder="Enter The Amount"
+              onChange={(e) => onChange("amount", e.target.value)}
             />
-          ) : (
+          </Form.Group>
+        </div>
+
+        <div className="form-section">
+          <Form.Group controlId="Date">
+            <Form.Label className="section-title">Date</Form.Label>
             <Form.Control
-              name="expenceName"
-              type="text"
-              value={expense.expenceName}
-              disabled
-              placeholder="Write your own Category"
-              onChange={(e) =>
-                onChange(e.target.name as keyof IExpense, e.target.value)
-              }
+              className="form-input"
+              type="date"
+              value={expense.date}
+              name="date"
+              onChange={(e) => onChange("date", e.target.value)}
             />
-          )}
-        </Form.Group>
-        {/* ---------------------------------The Amount Section Input------------------------------ */}
-        <Form.Group className="mb-3" controlId="Ammount">
-          <Form.Label>Amount</Form.Label>
-          <h4 className="form-text text-warning text-center">
-            Enter your Income with positive value and your Expenses with
-            nigative value
-          </h4>
-          <Form.Control
-            type="number"
-            value={expense.amount}
-            name="amount"
-            placeholder="Enter The Amount"
-            onChange={(e) =>
-              onChange(e.target.name as keyof IExpense, e.target.value)
-            }
-          />
-        </Form.Group>
-        {/* ---------------------------------The date Section Input--------------------------------- */}
-        <Form.Group className="mb-3" controlId="Date">
-          <Form.Label>Date</Form.Label>
-          <Form.Control
-            type="date"
-            value={expense.date}
-            name="date"
-            onChange={(e) =>
-              onChange(e.target.name as keyof IExpense, e.target.value)
-            }
-          />
-        </Form.Group>
-        {/* ---------------------------------The note Section Input--------------------------------- */}
-        <Form.Group className="mb-3" controlId="Notes">
-          <Form.Label>Notes</Form.Label>
-          <textarea
-            name="note"
-            className="form-control"
-            id="note"
-            value={expense.note}
-            placeholder="Enter any Comments"
-            onChange={(e) =>
-              onChange(e.target.name as keyof IExpense, e.target.value)
-            }
-          ></textarea>
-        </Form.Group>
-        {/* -------------------------------------The button Section--------------------------------- */}
-        <div className="d-flex justify-content-center pt-2">
+          </Form.Group>
+        </div>
+
+        <div className="form-section">
+          <Form.Group controlId="Notes">
+            <Form.Label className="section-title">Notes</Form.Label>
+            <textarea
+              className="form-textarea"
+              name="note"
+              value={expense.note}
+              placeholder="Enter any Comments"
+              onChange={(e) => onChange("note", e.target.value)}
+            />
+          </Form.Group>
+        </div>
+
+        <div className="form-actions">
           {isFormFilled ? (
-            <Button
-              type="submit"
-              variant="primary"
-              data-testid="addTransaction"
-            >
+            <Button type="submit" className="submit-button">
               Add Transaction
             </Button>
           ) : (
-            <div className="p-1 my-3 text-center text-danger">
-              {"Please Fill the Form first to Add."}
+            <div className="form-error">
+              Please fill in all required fields
             </div>
           )}
         </div>
       </form>
-    </>
+    </div>
   );
 }

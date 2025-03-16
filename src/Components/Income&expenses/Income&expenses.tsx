@@ -7,10 +7,10 @@ export default function IncomeAndExpenses() {
   return (
     <>
       <div className="d-flex justify-content-center">
-        <h4 className="me-2">
+        <h4 className="me-2 text-success">
           Income <span className="text-success">$ {theIncome}</span>
         </h4>
-        <h4 className="ms-2">
+        <h4 className="ms-2 text-danger">
           Expense <span className="text-danger">$ {theExpense}</span>
         </h4>
       </div>
